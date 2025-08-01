@@ -14,7 +14,7 @@ ConnectDB();
 app.use(express.json());
 
 const allowedOrigins = [
-    'https://note-mernstack-ui.vercel.app',
+    'https://thinknotes.vercel.app',
     'http://localhost:5173',
 ];
 
