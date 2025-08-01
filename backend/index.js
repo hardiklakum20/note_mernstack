@@ -14,8 +14,8 @@ ConnectDB();
 app.use(express.json());
 
 const allowedOrigins = [
-    'https://shoesx-mernstack.vercel.app',
-    'http://localhost:3000',
+    'https://note-mernstack-ui.vercel.app',
+    'http://localhost:5173',
 ];
 
 const corsOptions = {
