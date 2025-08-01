@@ -8,7 +8,7 @@ import { CiMenuFries } from "react-icons/ci";
 import { toast, ToastContainer } from 'react-toastify';
 import { ImUnlocked } from "react-icons/im";
 import { FaLock } from "react-icons/fa6";
-import { Modal } from 'bootstrap';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 
 const Dashboard = () => {
@@ -24,6 +24,10 @@ const Dashboard = () => {
     const [actionType, setActionType] = useState("");
 
     const modalRef = useRef(null);
+
+    // password hide show 
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
     const handleLogout = () => {
@@ -42,7 +46,6 @@ const Dashboard = () => {
                     Authorization: token
                 }
             });
-            console.log(response, 'view note');
 
 
             if (response.status === 200) {
@@ -82,12 +85,6 @@ const Dashboard = () => {
                 }
             });
 
-            console.log("noteId:", noteId);
-
-
-            console.log(response, 'protection');
-
-
             if (response.status === 201) {
                 toast.success(response.data.message);
                 setTimeout(() => {
@@ -115,16 +112,15 @@ const Dashboard = () => {
                     Authorization: token,
                 }
             });
-            console.log(response, 'unlock note');
 
             if (response.status === 200) {
                 toast.success(response.data.message);
 
                 setTimeout(() => {
                     if (actionType === "view") {
-                        navigate(`/view-note/${response.data.note._id}`, { state: response.data.note });                        
+                        navigate(`/view-note/${response.data.note._id}`, { state: response.data.note });
                     } else if (actionType === "edit") {
-                        navigate(`/edit-note/${response.data.note._id}`, { state: response.data.note });                        
+                        navigate(`/edit-note/${response.data.note._id}`, { state: response.data.note });
                     }
                 }, 1500);
 
@@ -151,25 +147,25 @@ const Dashboard = () => {
                 </nav>
             </aside>
 
-            <nav class="navbar navbar-expand-lg sidebar d-md-none">
-                <div class="container-fluid">
-                    <h2 class="navbar-brand" href="#">NotesApp</h2>
+            <nav className="navbar navbar-expand-lg sidebar d-md-none">
+                <div className="container-fluid">
+                    <h2 className="navbar-brand" href="#">NotesApp</h2>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2" aria-expanded="false" aria-label="Toggle navigation">
                         <CiMenuFries className='text-white' />
                     </button>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent2">
-                        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <Link to={"/"} className='text-decoration-none'><a class="nav-link active" aria-current="page">Dashboard</a></Link>
+                    <div className="collapse navbar-collapse" id="navbarSupportedContent2">
+                        <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                            <li className="nav-item">
+                                <Link to={"/"} className='text-decoration-none nav-link'>Dashboard</Link>
                             </li>
-                            <li class="nav-item">
-                                <Link to={"/profile"} className='text-decoration-none'> <a class="nav-link">Profile</a></Link>
+                            <li className="nav-item">
+                                <Link to={"/profile"} className='text-decoration-none nav-link'>Profile</Link>
                             </li>
-                            <li class="nav-item">
-                                <Link to={"/login"} className='text-decoration-none' onClick={handleLogout}> <a class="nav-link">Logout</a></Link>
+                            <li className="nav-item">
+                                <Link to={"/login"} className='text-decoration-none nav-link' onClick={handleLogout}>Logout</Link>
                             </li>
-                            <li class="nav-item">
-                                <Link to={"/change-password"} className='text-decoration-none'><a class="nav-link">Change Password</a></Link>
+                            <li className="nav-item">
+                                <Link to={"/change-password"} className='text-decoration-none nav-link'>Change Password</Link>
                             </li>
                         </ul>
                     </div>
@@ -225,29 +221,33 @@ const Dashboard = () => {
                                     } else {
                                         setNoteId(note._id);
                                         setActionType("view");
-                                        const modalElement = document.getElementById("exampleModal2");
-                                        const modal = new Modal(modalElement);
-                                        modal.show();
                                     }
-                                }}>View</button>
+                                }}  {...(note.protect
+                                    ? {
+                                        'data-bs-toggle': 'modal',
+                                        'data-bs-target': '#exampleModal2'
+                                    }
+                                    : {})}>View</button>
                                 <button className="btn btn-outline-secondary" onClick={() => {
                                     if (note.protect === false) {
                                         navigate(`/edit-note/${note._id}`, { state: note })
                                     } else {
                                         setNoteId(note._id);
                                         setActionType("edit");
-                                        const modalElement = document.getElementById("exampleModal2");
-                                        const modal = new Modal(modalElement);
-                                        modal.show();
                                     }
-                                }}>Edit</button>
+                                }}  {...(note.protect
+                                    ? {
+                                        'data-bs-toggle': 'modal',
+                                        'data-bs-target': '#exampleModal2'
+                                    }
+                                    : {})}>Edit</button>
                             </div>
                         </div>
                     ))}
                 </section>
 
                 {/* view modal */}
-                <div class="modal" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -255,9 +255,16 @@ const Dashboard = () => {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <div class="mb-3">
+                                <div class="mb-3 position-relative">
                                     <label for="exampleInputEmail1" class="form-label">Enter Password</label>
-                                    <input type="password" class="form-control" placeholder='Enter Password' id="exampleInputEmail1" aria-describedby="emailHelp" value={unlockPassword} onChange={(e) => setUnlockPassword(e.target.value)} />
+                                    <input type={showPassword ? "text" : "password"} class="form-control" placeholder='Enter Password' id="exampleInputEmail1" aria-describedby="emailHelp" value={unlockPassword} onChange={(e) => setUnlockPassword(e.target.value)} />
+                                    <span
+                                        className="position-absolute top-70 end-0 translate-middle-y me-3"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </span>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -269,7 +276,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* create password modal */}
-                <div class="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" ref={modalRef}>
+                <div className="modal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" ref={modalRef}>
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -277,13 +284,27 @@ const Dashboard = () => {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <div class="mb-3">
+                                <div class="mb-3 position-relative">
                                     <label for="exampleInputEmail1" class="form-label">Set New Password</label>
-                                    <input type="password" class="form-control" placeholder='Set New Password' id="exampleInputEmail1" aria-describedby="emailHelp" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <input type={showPassword ? "text" : "password"} class="form-control" placeholder='Set New Password' id="exampleInputEmail1" aria-describedby="emailHelp" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <span
+                                        className="position-absolute top-70 end-0 translate-middle-y me-3"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </span>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-3 position-relative">
                                     <label for="exampleInputEmail2" class="form-label">Confirm New Password</label>
-                                    <input type="password" class="form-control" placeholder='Confirm New Password' id="exampleInputEmail2" aria-describedby="emailHelp" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                                    <input type={showConfirmPassword ? "text" : "password"} class="form-control" placeholder='Confirm New Password' id="exampleInputEmail2" aria-describedby="emailHelp" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                                    <span
+                                        className="position-absolute top-70 end-0 translate-middle-y me-3"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    >
+                                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                                    </span>
                                 </div>
                             </div>
                             <div class="modal-footer">

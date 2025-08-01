@@ -2,6 +2,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import axios from 'axios';
 import React from 'react';
 import { useState } from 'react';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 
@@ -16,6 +17,11 @@ const ViewNote = () => {
     const [password, setPassword] = useState();
     const [newPassword, setNewPassword] = useState();
     const [confirmNewPassword, setConfirmNewPassword] = useState();
+
+    // hide show passowrd
+    const [showPassword, setShowPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const DeleteProtection = async (id) => {
         try {
@@ -107,22 +113,43 @@ const ViewNote = () => {
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="mb-3">
+                            <div class="mb-3 position-relative">
                                 <label for="exampleInputEmail1" class="form-label">Old Password</label>
-                                <input type="password" class="form-control" placeholder='Old Password' id="exampleInputEmail1" aria-describedby="emailHelp" value={password} onChange={(e) => { setPassword(e.target.value) }} />
+                                <input type={showPassword ? "text" : "password"} class="form-control" placeholder='Old Password' id="exampleInputEmail1" aria-describedby="emailHelp" value={password} onChange={(e) => { setPassword(e.target.value) }} />
+                                <span
+                                    className="position-absolute top-70 end-0 translate-middle-y me-3"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </span>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 position-relative">
                                 <label for="exampleInputEmail1" class="form-label">Set New Password</label>
-                                <input type="password" class="form-control" placeholder='Set New Password' id="exampleInputEmail1" aria-describedby="emailHelp" value={newPassword} onChange={(e) => { setNewPassword(e.target.value) }} />
+                                <input type={showNewPassword ? "text" : "password"} class="form-control" placeholder='Set New Password' id="exampleInputEmail1" aria-describedby="emailHelp" value={newPassword} onChange={(e) => { setNewPassword(e.target.value) }} />
+                                <span
+                                    className="position-absolute top-70 end-0 translate-middle-y me-3"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => setShowNewPassword(!showNewPassword)}
+                                >
+                                    {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+                                </span>
                             </div>
-                            <div class="mb-3">
+                            <div class="mb-3 position-relative">
                                 <label for="exampleInputEmail2" class="form-label">Confirm New Password</label>
-                                <input type="password" class="form-control" placeholder='Confirm New Password' id="exampleInputEmail2" aria-describedby="emailHelp" value={confirmNewPassword} onChange={(e) => { setConfirmNewPassword(e.target.value) }} />
+                                <input type={showConfirmPassword ? "text" : "password"} class="form-control" placeholder='Confirm New Password' id="exampleInputEmail2" aria-describedby="emailHelp" value={confirmNewPassword} onChange={(e) => { setConfirmNewPassword(e.target.value) }} />
+                                <span
+                                    className="position-absolute top-70 end-0 translate-middle-y me-3"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                >
+                                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                                </span>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary"  onClick={() => { UpdateProtection(state._id) }}>Save changes</button>
+                            <button type="submit" class="btn btn-primary" onClick={() => { UpdateProtection(state._id) }}>Save changes</button>
                         </div>
                     </div>
                 </div>
