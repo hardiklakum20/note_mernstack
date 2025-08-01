@@ -101,8 +101,7 @@ const ForgotPasswordController = async (req, res) => {
         user.resetPasswordToken = token;
         await user.save();
 
-        const link = `http://localhost:5173/reset-password/${token}`;
-
+        const link = `${process.env.FRONTEND_PORT}/reset-password/${token}`;
 
         const mailOptions = {
             from: 'hardiklakum80@gmail.com',
