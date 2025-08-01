@@ -25,8 +25,7 @@ A robust and secure full-stack **notes management application** built with **Mon
 │   │   └── db.js
 │   └── .env
 │
-├── README.md
-└── package.json
+└── README.md
 ```
 
 ---
