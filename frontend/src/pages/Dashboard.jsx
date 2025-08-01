@@ -22,6 +22,7 @@ const Dashboard = () => {
     const [noteId, setNoteId] = useState();
     const [unlockPassword, setUnlockPassword] = useState();
     const [actionType, setActionType] = useState("");
+    const [loading, setLoading] = useState(true);
 
     const modalRef = useRef(null);
 
@@ -53,6 +54,8 @@ const Dashboard = () => {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -178,72 +181,78 @@ const Dashboard = () => {
                     <button className="btn btn-accent" onClick={() => navigate('/add-note')}>+ New Note</button>
                 </header>
                 <section className="notes-grid">
-                    {
-                        data.length === 0 &&
+                    {loading ? (
+                        <div className="text-center">
+                            <p>Loading...</p>
+                        </div>
+                    ) : data.length === 0 ? (
                         <div className="no-notes">
                             <p>No notes found.</p>
                             <button className="btn btn-primary" onClick={() => navigate('/add-note')}>+ New Note</button>
                         </div>
-                    }
-                    {data.map(note => (
-                        <div key={note.id} className="note-card">
-                            <div className='d-flex align-items-center justify-content-between'>
-                                <h3>{note.title}</h3>
-                                <div className='d-flex align-items-center gap-2'>
+                    ) : (
+                        data.map(note => (
+                            <div key={note.id} className="note-card">
+                                <div className='d-flex align-items-center justify-content-between'>
+                                    <h3>{note.title}</h3>
+                                    <div className='d-flex align-items-center gap-2'>
 
-                                    {note.protect === true ? (
-                                        <FaLock className="fs-4" title="Protected" />
-                                    ) : (
-                                        <ImUnlocked
-                                            className="fs-4"
-                                            title="Click to protect"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#exampleModal"
-                                            onClick={() => setNoteId(note._id)}
-                                        />
-                                    )}
+                                        {note.protect === true ? (
+                                            <FaLock className="fs-4" title="Protected" />
+                                        ) : (
+                                            <ImUnlocked
+                                                className="fs-4"
+                                                title="Click to protect"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#exampleModal"
+                                                onClick={() => setNoteId(note._id)}
+                                            />
+                                        )}
 
-                                    <MdDelete className='fs-4' onClick={() => handleDelete(note._id)} />
+                                        <MdDelete className='fs-4' onClick={() => handleDelete(note._id)} />
+                                    </div>
+                                </div>
+                                {
+                                    note.protect === false ? (
+                                        note.description.replace(/<[^>]+>/g, '').length > 19
+                                            ? note.description.replace(/<[^>]+>/g, '').slice(0, 19) + '...'
+                                            : note.description.replace(/<[^>]+>/g, '')
+                                    ) : ""
+
+                                }
+                                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                                    <button className="btn btn-outline-primary" onClick={() => {
+                                        if (note.protect === false) {
+                                            navigate(`/view-note/${note._id}`, { state: note })
+                                        } else {
+                                            setNoteId(note._id);
+                                            setActionType("view");
+                                        }
+                                    }}  {...(note.protect
+                                        ? {
+                                            'data-bs-toggle': 'modal',
+                                            'data-bs-target': '#exampleModal2'
+                                        }
+                                        : {})}>View</button>
+                                    <button className="btn btn-outline-secondary" onClick={() => {
+                                        if (note.protect === false) {
+                                            navigate(`/edit-note/${note._id}`, { state: note })
+                                        } else {
+                                            setNoteId(note._id);
+                                            setActionType("edit");
+                                        }
+                                    }}  {...(note.protect
+                                        ? {
+                                            'data-bs-toggle': 'modal',
+                                            'data-bs-target': '#exampleModal2'
+                                        }
+                                        : {})}>Edit</button>
                                 </div>
                             </div>
-                            {
-                                note.protect === false ? (
-                                    note.description.replace(/<[^>]+>/g, '').length > 19
-                                        ? note.description.replace(/<[^>]+>/g, '').slice(0, 19) + '...'
-                                        : note.description.replace(/<[^>]+>/g, '')
-                                ) : ""
+                        ))
+                    )}
 
-                            }
-                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
-                                <button className="btn btn-outline-primary" onClick={() => {
-                                    if (note.protect === false) {
-                                        navigate(`/view-note/${note._id}`, { state: note })
-                                    } else {
-                                        setNoteId(note._id);
-                                        setActionType("view");
-                                    }
-                                }}  {...(note.protect
-                                    ? {
-                                        'data-bs-toggle': 'modal',
-                                        'data-bs-target': '#exampleModal2'
-                                    }
-                                    : {})}>View</button>
-                                <button className="btn btn-outline-secondary" onClick={() => {
-                                    if (note.protect === false) {
-                                        navigate(`/edit-note/${note._id}`, { state: note })
-                                    } else {
-                                        setNoteId(note._id);
-                                        setActionType("edit");
-                                    }
-                                }}  {...(note.protect
-                                    ? {
-                                        'data-bs-toggle': 'modal',
-                                        'data-bs-target': '#exampleModal2'
-                                    }
-                                    : {})}>Edit</button>
-                            </div>
-                        </div>
-                    ))}
+
                 </section>
 
                 {/* view modal */}
