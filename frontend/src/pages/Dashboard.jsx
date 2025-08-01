@@ -126,10 +126,7 @@ const Dashboard = () => {
                         navigate(`/edit-note/${response.data.note._id}`, { state: response.data.note });
                     }
                 }, 1500);
-
-
-
-
+                setUnlockPassword('');
             }
         } catch (error) {
             toast.error(error.response.data.error);
@@ -209,7 +206,13 @@ const Dashboard = () => {
                                             />
                                         )}
 
-                                        <MdDelete className='fs-4' onClick={() => handleDelete(note._id)} />
+                                        <MdDelete className='fs-4' onClick={() => {
+                                            if (note.protect === true) {
+                                                toast.warning("This note is protected. Please remove the password before deleting.");
+                                                return;
+                                            }
+                                            handleDelete(note._id);
+                                        }} />
                                     </div>
                                 </div>
                                 {
