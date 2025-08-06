@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose")
 const NoteModal = require("../modal/NoteModal")
 const ProtectionModal = require("../modal/ProtectionModal")
 const bcrypt = require("bcrypt")
+const { decrypt, isEncryptedFormat } = require("../utils/cryptoUtil")
 
 
 const ProtectionController = async (req, res) => {
@@ -61,6 +62,14 @@ const UnprotectController = async (req, res) => {
             return res.status(404).json({ error: "Note not found" });
         }
 
+        if (isEncryptedFormat(note.description)) {
+            try {
+                note.description = decrypt(note.description);
+            } catch (err) {
+                console.error("Decryption failed:", err.message);
+                note.description = "Unable to decrypt";
+            }
+        }
         return res.status(200).json({
             message: "Unlocked successfully",
             note
